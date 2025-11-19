@@ -2,47 +2,55 @@ import User from "../models/User.mjs";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-export const registerUser = async (req, res) => {
+let registerUser = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password } = req.body;
 
-        // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create user
         const newUser = await User.create({
             name,
             email,
             password: hashedPassword,
-            role
+            role: "guest"    // ✔ protection!
         });
 
-        return res.status(201).json({ message: "User registered successfully", user: newUser });
+        return res.status(201).json({
+            message: "User registered successfully",
+            user: {
+                id: newUser._id,
+                name: newUser.name,
+                email: newUser.email,
+                role: newUser.role
+            }
+        });
+
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
 
-export const loginUser = async (req, res) => {
+let loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check user
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: "User not found" });
 
-        // Compare password
+        // ✔ deactivate check
+        if (user.isActive === false) {
+            return res.status(403).json({ message: "Account is deactivated" });
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Incorrect password" });
 
-        // Create JWT token
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET,
@@ -64,3 +72,5 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+export default { loginUser, registerUser };

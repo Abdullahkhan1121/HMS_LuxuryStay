@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.mjs";
+import adminRoutes from "./routes/adminRoutes.mjs";
 
 dotenv.config();
 
@@ -25,7 +26,9 @@ app.get("/", (req, res) => {
     res.send("LuxuryStay Backend Running...");
 });
 
+
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
