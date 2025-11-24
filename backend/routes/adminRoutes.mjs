@@ -1,6 +1,6 @@
 import express from "express";
-import { requireAuth } from "../middlewares/authMiddleware.mjs";
-import { requireRole } from "../middlewares/roleMiddleware.mjs";
+import { requireAuth } from "../middleware/authMiddleware.mjs";
+import { requireRole } from "../middleware/roleMiddleware.mjs";
 import adminController from "../controllers/adminController.mjs";
 
 const { createStaff, getAllStaff, deactivateStaff } = adminController;

@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.mjs";
 import adminRoutes from "./routes/adminRoutes.mjs";
+import roomRoutes from "./routes/roomRoutes.mjs";
+import bookingRoutes from "./routes/bookingRoutes.mjs";
+
 
 dotenv.config();
 
@@ -29,6 +32,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/admin/rooms", roomRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
